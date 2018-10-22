@@ -29,7 +29,7 @@
     <string name="edit_required_fields">Please fill in the required fields</string>
     <string name="inventory_activity">InventoryActivity</string>
     <string name="rows_deleted">rows deleted from pet database</string>
-    <string name="edit_valid_price">Please insert a valid price for the product.</string>
+    <string name="edit_valid_data">Please insert valid price and quantity for the product.</string>
     <string name="sell_item">Sell 1</string>
     <string name="quantity">Quantity</string>
     <string name="price">Price</string>

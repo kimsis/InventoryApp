@@ -183,7 +183,7 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
         alertDialog.show();
     }
 
-    private void saveBook(){
+    private int saveBook(){
         String productNameString = mProductNameEditText.getText().toString().trim();
         String priceString = mPriceEditText.getText().toString().trim();
         String quantityString = mQuantityEditText.getText().toString().trim();
@@ -196,24 +196,26 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
                 TextUtils.isEmpty(productNameString) && TextUtils.isEmpty(priceString) &&
                 TextUtils.isEmpty(quantityString) && TextUtils.isEmpty(supplierNameString) &&
                 TextUtils.isEmpty(supplierPhoneNumberString)) {
+
+            Toast.makeText(this, "No data was modified into the database", Toast.LENGTH_SHORT).show();
             // Since no fields were modified, we can return early without creating a new book.
             // No need to create ContentValues and no need to do any ContentProvider operations.
-            return;
+            return 1;
         }
 
         // If any of those required fields is empty, we must not save the new product
-        if (!TextUtils.isEmpty(productNameString) && !TextUtils.isEmpty(priceString)) {
+        if (!TextUtils.isEmpty(productNameString) && !TextUtils.isEmpty(priceString)
+                && !TextUtils.isEmpty(quantityString) && !TextUtils.isEmpty(supplierNameString)
+                && !TextUtils.isEmpty(supplierPhoneNumberString)) {
 
-            if (TextUtils.isDigitsOnly(priceString) && Integer.parseInt(priceString) != 0) {
+            if (TextUtils.isDigitsOnly(priceString) && Integer.parseInt(priceString) != 0
+                    && TextUtils.isDigitsOnly(quantityString) && Integer.parseInt(quantityString) != 0) {
                 // Create a ContentValues object where column names are the keys,
                 // and book attributes from the editor are the values.
                 ContentValues values = new ContentValues();
                 values.put(BookEntry.COLUMN_PRODUCT_NAME, productNameString);
                 values.put(BookEntry.COLUMN_PRICE, Integer.parseInt(priceString));
-                int quantity = 0;
-                if (!TextUtils.isEmpty(quantityString))
-                    quantity = Integer.parseInt(quantityString);
-                values.put(BookEntry.COLUMN_QUANTITY, quantity);
+                values.put(BookEntry.COLUMN_QUANTITY, Integer.parseInt(quantityString));
                 values.put(BookEntry.COLUMN_SUPPLIER_NAME, supplierNameString);
                 values.put(BookEntry.COLUMN_SUPPLIER_PHONE_NUMBER, supplierPhoneNumberString);
 
@@ -250,17 +252,18 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
                                 Toast.LENGTH_SHORT).show();
                     }
                 }
-                // Exit activity
-                finish();
+                return 1;
             }
             else{
-                Toast toastUndone = Toast.makeText(this, R.string.edit_valid_price, Toast.LENGTH_SHORT);
+                Toast toastUndone = Toast.makeText(this, R.string.edit_valid_data, Toast.LENGTH_SHORT);
                 toastUndone.show();
+                return 0;
             }
         }
         else{
             Toast toastUndone = Toast.makeText(this, R.string.edit_required_fields, Toast.LENGTH_SHORT);
             toastUndone.show();
+            return 0;
         }
     }
 
@@ -307,7 +310,18 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
             // Respond to a click on the "Save" menu option
             case R.id.action_save:
                 // Save book to database
-                    saveBook();
+                    switch (saveBook()){
+                        // If the saveBook method returns a value of 0, it means that we still want to stay
+                        // in the current activity, to edit/insert a pet.
+                        // If it returns a value of 1, it means that we are finished with this activity
+                        // In the second case we just leave the switch statement, thus I decided to let
+                        // The first one to fall into it, instead of write a second break;
+                        case 1:
+                            // Exit activity
+                            finish();
+                        case 0:
+                            break;
+                    }
                 return true;
             // Respond to a click on the "Delete" menu option
             case R.id.action_delete_a_book:
@@ -318,6 +332,7 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
             case android.R.id.home:
                 if (!mBookHasChanged) {
                     NavUtils.navigateUpFromSameTask(EditorActivity.this);
+                    Toast.makeText(this, "No data was modified into the database", Toast.LENGTH_SHORT).show();
                     return true;
                 }
                 DialogInterface.OnClickListener discardButtonOnClickListener =

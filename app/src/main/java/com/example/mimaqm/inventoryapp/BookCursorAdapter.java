@@ -73,9 +73,9 @@ public class BookCursorAdapter extends CursorAdapter {
 
         // Update the TextViews with the attributes for the current book
         productNameTextView.setText(productName);
-        final String priceText = "Price" + productPrice;
+        final String priceText = "Price: " + productPrice;
         PriceTextView.setText(priceText);
-        final String quantityText = "Quantity" + productQuantity;
+        final String quantityText = "Quantity: " + productQuantity;
         QuantityTextView.setText(quantityText);
 
         productInfo.setOnClickListener(new View.OnClickListener() {
