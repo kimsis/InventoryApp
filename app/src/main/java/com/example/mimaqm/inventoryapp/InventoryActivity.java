@@ -50,24 +50,6 @@ public class InventoryActivity extends AppCompatActivity implements LoaderManage
         mCursorAdapter = new BookCursorAdapter(this, null);
         listView.setAdapter(mCursorAdapter);
 
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-
-                // Initialize the intent that is to be sent for the book editing
-                Intent intent = new Intent(InventoryActivity.this, EditorActivity.class);
-
-                // Create the uri for the current book
-                Uri currentBookUri = ContentUris.withAppendedId(BookEntry.CONTENT_URI, id);
-
-                // Set the URI on the data field of the intent
-                intent.setData(currentBookUri);
-
-                // Launch the {@link EditorActivity} to display the data for the current book.
-                startActivity(intent);
-            }
-        });
-
         getLoaderManager().initLoader(BOOK_LOADER, null, this);
     }
 
